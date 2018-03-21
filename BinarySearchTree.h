@@ -3,23 +3,31 @@
 // Header file for the BinarySearchTree class
 //
 
-class BinarySearchTree {
-protected:
+struct Node {
+    Node* left;
+    Node* right;
     int data;
-    BinarySearchTree* left;
-    BinarySearchTree* right;
+};
 
-    int sizeHelper(int& size);
-    void removeBoth(BinarySearchTree* &root);
-    void removeNode(BinarySearchTree* &root);
-    void showInorder();
-    void showPostorder();
+class BinarySearchTree {
+private:
+    Node* node;
+    Node* searchHelper(Node* node, int key);
+    bool insertHelper(Node* &node, int key);
+    bool removeHelper(Node* &node, int key);
+    int sizeHelper(Node* node, int& size);
+    void removeBoth(Node* &node);
+    void removeNode(Node* &node);
+    void showInorder(Node* node);
+    void showPostorder(Node* node);
+    int calculateHeight(Node* node);
+    bool checkHelper(Node* node);
 
 public:
-    explicit BinarySearchTree(int data);
-    BinarySearchTree* search(int key);
-    bool insert(BinarySearchTree* &root, int key);
-    bool remove(BinarySearchTree* &root, int key);
+    explicit BinarySearchTree();
+    Node* search(int key);
+    bool insert(int key);
+    bool remove(int key);
     void show();
     int height();
     int size();
