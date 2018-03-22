@@ -2,18 +2,26 @@
 // Author: Blake Boswell
 #include "BinarySearchTree.h"
 
+struct AVLNode: Node {
+    int balanceVector;
+};
+
 class AVLTree: public BinarySearchTree {
 private:
-    int balanceVector;
-    void rrRotation(AVLTree* &root);
-    void rlRotation(AVLTree* &root);
-    void llRotation(AVLTree* &root);
-    void lrRotation(AVLTree* &root);
-    void rotate(AVLTree* &root);
+    AVLNode* root;
+    void rrRotation(AVLNode* &node);
+    void rlRotation(AVLNode* &node);
+    void llRotation(AVLNode* &node);
+    void lrRotation(AVLNode* &node);
+    void rotate(AVLNode* &node);
 
 public:
-    AVLTree(int data);
-    bool insert(AVLTree* &root, int key);
-    bool remove(AVLTree* &root, int key);
+    AVLTree();
+    bool search(int key);
+    bool insert(int key);
+    bool remove(int key);
+    void show();
+    int height();
+    int size();
     bool check();
 };

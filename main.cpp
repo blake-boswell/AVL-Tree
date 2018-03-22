@@ -4,56 +4,12 @@
 #include <iostream>
 #include <stdlib.h>
 #include <ctime>
-#include "BinarySearchTree.h"
+#include "AVLTree.h"
 
 using namespace std;
 
 int main() {
-    BinarySearchTree* tree = new BinarySearchTree();
-    BinarySearchTree* result;
-    // tree->show();
-    tree->insert(3);
-    tree->insert(4);
-    tree->insert(2);
-    tree->insert(1);
-    tree->insert(7);
-    tree->insert(6);
-    tree->insert(8);
-    tree->insert(9);
-    cout << "Size: " << tree->size() << endl;
-    cout << "Height: " << tree->height() << endl;
-    cout << "isTree?: " << tree->check() << endl;
-    tree->show();
-    tree->remove(2);
-    cout << "Removing 2" << endl;
-    cout << "Size: " << tree->size() << endl;
-    cout << "Height: " << tree->height() << endl;
-    cout << "isTree?: " << tree->check() << endl;
-    tree->show();
-    tree->remove(1);
-    cout << "Removing 1" << endl;
-    cout << "Size: " << tree->size() << endl;
-    cout << "Height: " << tree->height() << endl;
-    cout << "isTree?: " << tree->check() << endl;
-    tree->show();
-    tree->remove(8);
-    cout << "Removing 8" << endl;
-    cout << "Size: " << tree->size() << endl;
-    cout << "Height: " << tree->height() << endl;
-    cout << "isTree?: " << tree->check() << endl;
-    tree->show();
-    tree->remove(7);
-    cout << "Removing 7" << endl;
-    cout << "Size: " << tree->size() << endl;
-    cout << "Height: " << tree->height() << endl;
-    cout << "isTree?: " << tree->check() << endl;
-    tree->show();
-    tree->search(6)->data = 10;
-    cout << "Set 6 to 10, to test the check function out" << endl;
-    tree->show();
-    cout << "Size: " << tree->size() << endl;
-    cout << "Height: " << tree->height() << endl;
-    cout << "isTree?: " << tree->check() << endl;
+    AVLTree* avl = new AVLTree();
 
     // Empirical study
     cout << "\n\nEmpirical Study\n\n" << endl;

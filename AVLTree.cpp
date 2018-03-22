@@ -1,36 +1,58 @@
 // Author: Blake Boswell
 #include "AVLTree.h"
 
-AVLTree::AVLTree(int data): BinarySearchTree(data) {
+AVLTree::AVLTree(): BinarySearchTree() {
+    this->root = NULL;
+}
+
+void AVLTree::rrRotation(AVLNode* &node) {
+
+}
+
+void AVLTree::rlRotation(AVLNode* &node) {
     
 }
 
-void AVLTree::rrRotation(AVLTree* &root) {
-
-}
-
-void AVLTree::rlRotation(AVLTree* &root) {
+void AVLTree::llRotation(AVLNode* &node) {
     
 }
 
-void AVLTree::llRotation(AVLTree* &root) {
-    
-}
-
-void AVLTree::lrRotation(AVLTree* &root) {
+void AVLTree::lrRotation(AVLNode* &node) {
     
 }
 
 // Purpose: Determine what rotation to perform
-void AVLTree::rotate(AVLTree* &root) {
+void AVLTree::rotate(AVLNode* &node) {
 
 }
 
-bool AVLTree::insert(AVLTree* &root, int key) {
+// Purpose: Find the data in the tree given a key
+bool AVLTree::search(int key) {
 
 }
 
-bool AVLTree::remove(AVLTree* &root, int key) {
+// Purpose: Insert into the tree and balance it
+bool AVLTree::insert(int key) {
+
+}
+
+// Purpose: Remove from the tree and balance it
+bool AVLTree::remove(int key) {
+
+}
+
+// Purpose: Show the contents of the tree
+void AVLTree::show() {
+
+}
+
+// Purpose: Retrieve the height of the tree
+int AVLTree::height() {
+
+}
+
+// Purpose: Retrieve the number of nodes in the tree
+int AVLTree::size() {
 
 }
 

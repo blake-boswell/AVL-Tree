@@ -2,6 +2,7 @@
 // Created by blake on 3/3/2018.
 // Header file for the BinarySearchTree class
 //
+#include <cstddef>
 
 struct Node {
     Node* left;
