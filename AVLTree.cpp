@@ -35,8 +35,9 @@ void AVLTree::rrRotation(AVLNode* &node) {
     node->left->right = tempLeft;
 
     // Fix balance factors
-    node->balanceFactor += 1;
-    node->left->balanceFactor += 2;
+    // node->balanceFactor += 1;
+    // node->left->balanceFactor += 2;
+    rebalance(node);
     // +1 to parent
 }
 
@@ -51,9 +52,10 @@ void AVLTree::rlRotation(AVLNode* &node) {
     node->right->left = tempRight;
 
     // Fix balance factors
-    node->balanceFactor -= 1;
-    node->right->balanceFactor -= 2;
-    node->left->balanceFactor += 2;
+    // node->balanceFactor -= 1;
+    // node->right->balanceFactor -= 2;
+    // node->left->balanceFactor += 2;
+    rebalance(node);
     // +1 to parent
 }
 
@@ -65,8 +67,9 @@ void AVLTree::llRotation(AVLNode* &node) {
     node->right->left = tempRight;
 
     // Fix balance factors
-    node->balanceFactor -= 1;
-    node->right->balanceFactor -= 2;
+    // node->balanceFactor -= 1;
+    // node->right->balanceFactor -= 2;
+    rebalance(node);
 }
 
 void AVLTree::lrRotation(AVLNode* &node) {
@@ -82,8 +85,9 @@ void AVLTree::lrRotation(AVLNode* &node) {
     node->left = temp;
 
     // Fix balance factors
-    node->right->balanceFactor -= 2;
-    node->left->balanceFactor += 1;
+    // node->right->balanceFactor -= 2;
+    // node->left->balanceFactor += 1;
+    rebalance(node);
     
     
     
@@ -97,6 +101,18 @@ void AVLTree::rotate(AVLNode* &node) {
 // Purpose: Find the data in the tree given a key
 bool AVLTree::search(int key) {
 
+}
+
+void AVLTree::rebalance(AVLNode* &node) {
+    if(node == NULL) {
+        return;
+    }
+    int leftHeight = calculateHeight(node->left);
+    int rightHeight = calculateHeight(node->right);
+    node->balanceFactor = leftHeight - rightHeight;
+    cout << "[" << node->data << "]\tLeft: " << leftHeight << "\tRight: " << rightHeight << endl;
+    rebalance(node->left);
+    rebalance(node->right);
 }
 
 /**
@@ -120,12 +136,14 @@ int AVLTree::insertHelper(AVLNode* &node, int key) {
     }
     if(node->data > key) {
         // Go down the left subtree
-        int didRotate = insertHelper(node->left, key);
-        if(didRotate > 0) {
+        int insertCode = insertHelper(node->left, key);
+        if(insertCode > 0) {
             cout << "[L] " << node->data << endl;
-            if(didRotate != 2) {
-                node->balanceFactor += 1;
-            }
+            int leftHeight = calculateHeight(node->left);
+            int rightHeight = calculateHeight(node->right);
+            node->balanceFactor = leftHeight - rightHeight;
+            
+            
 
             if(node->balanceFactor >= 2) {
                 // Rotate L*
@@ -143,16 +161,18 @@ int AVLTree::insertHelper(AVLNode* &node, int key) {
                     return 2;
                 }
             }
-            return didRotate;
+            return insertCode;
         }
     } else {
         // Go down the right subtree
-        int didRotate = insertHelper(node->right, key);
-        if(didRotate > 0) {
+        int insertCode = insertHelper(node->right, key);
+        if(insertCode > 0) {
             cout << "[R] " << node->data << endl;
-            if(didRotate != 2) {
-                node->balanceFactor -= 1;
-            }
+            int leftHeight = calculateHeight(node->left);
+            int rightHeight = calculateHeight(node->right);
+            node->balanceFactor = leftHeight - rightHeight;
+            
+            
             
             if(node->balanceFactor <= -2) {
                 // Rotate R*
@@ -170,14 +190,19 @@ int AVLTree::insertHelper(AVLNode* &node, int key) {
                     return 2;
                 }
             }
-            return didRotate;
+            return insertCode;
         }
     }
 }
 
 // Purpose: Insert into the tree and balance it
 bool AVLTree::insert(int key) {
-    return insertHelper(this->root, key);
+    if(insertHelper(this->root, key)) {
+        // rebalance(this->root);
+        return true;
+    } else {
+        return false;
+    }
 
 }
 
@@ -220,9 +245,16 @@ void AVLTree::show() {
     cout << "\n";
 }
 
+int AVLTree::calculateHeight(AVLNode* node) { 
+    if(node == NULL) {
+        return 0;
+    }
+    return 1 + max(calculateHeight(node->left), calculateHeight(node->right));
+}
+
 // Purpose: Retrieve the height of the tree
 int AVLTree::height() {
-
+    return calculateHeight(this->root);
 }
 
 // Purpose: Retrieve the number of nodes in the tree
