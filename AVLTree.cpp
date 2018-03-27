@@ -121,23 +121,22 @@ void AVLTree::rebalance(AVLNode* &node) {
  * 1: insert success
  * 2: insert and rotation
 */
-int AVLTree::insertHelper(AVLNode* &node, int key) {
+bool AVLTree::insertHelper(AVLNode* &node, int key) {
     if(node == NULL) {
         node = new AVLNode;
         node->data = key;
         node->left = NULL;
         node->right = NULL;
         node->balanceFactor = 0;
-        return 1;
+        return true;
     }
     if(node->data == key) {
         // Data already exists
-        return 0;
+        return false;
     }
     if(node->data > key) {
         // Go down the left subtree
-        int insertCode = insertHelper(node->left, key);
-        if(insertCode > 0) {
+        if(insertHelper(node->left, key)) {
             cout << "[L] " << node->data << endl;
             int leftHeight = calculateHeight(node->left);
             int rightHeight = calculateHeight(node->right);
@@ -152,21 +151,18 @@ int AVLTree::insertHelper(AVLNode* &node, int key) {
                     // Rotate LR
                     cout << "Rotating [" << node->data << "] LR" << endl;
                     lrRotation(node);
-                    return 2;
                     // Still need to add 1 to the parent BF if this is the right
                 } else if(node->left->balanceFactor > 0) {
                     // Rotate LL
                     cout << "Rotating [" << node->data << "] LL" << endl; 
                     llRotation(node);
-                    return 2;
                 }
             }
-            return insertCode;
+            return true;
         }
     } else {
         // Go down the right subtree
-        int insertCode = insertHelper(node->right, key);
-        if(insertCode > 0) {
+        if(insertHelper(node->right, key)) {
             cout << "[R] " << node->data << endl;
             int leftHeight = calculateHeight(node->left);
             int rightHeight = calculateHeight(node->right);
@@ -181,28 +177,21 @@ int AVLTree::insertHelper(AVLNode* &node, int key) {
                     // Rotate RR
                     cout << "Rotating [" << node->data << "] RR" << endl;
                     rrRotation(node);
-                    return 2;
                     // Still need to add 1 to parent BF if this is the right
                 } else if(node->right->balanceFactor > 0) {
                     // Rotate RL
                     cout << "Rotating [" << node->data << "] RL" << endl;
                     rlRotation(node);
-                    return 2;
                 }
             }
-            return insertCode;
+            return true;
         }
     }
 }
 
 // Purpose: Insert into the tree and balance it
 bool AVLTree::insert(int key) {
-    if(insertHelper(this->root, key)) {
-        // rebalance(this->root);
-        return true;
-    } else {
-        return false;
-    }
+    return insertHelper(this->root, key);
 
 }
 
