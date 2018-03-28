@@ -38,6 +38,7 @@ private:
     void llRotation(AVLNode* &node);
     void lrRotation(AVLNode* &node);
     void rotate(AVLNode* &node);
+    bool searchHelper(AVLNode* node, int key);
 
 public:
     AVLTree();

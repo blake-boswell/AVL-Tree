@@ -98,9 +98,27 @@ void AVLTree::rotate(AVLNode* &node) {
 
 }
 
+bool AVLTree::searchHelper(AVLNode* node, int key) {
+    if(node == NULL) {
+        // Tree is empty
+        return NULL;
+    }
+    if(node->data == key) {
+        // Found the node
+        return node;
+    }
+    if(node->data > key) {
+        // Go down the left subtree
+        return searchHelper(node->left, key);
+    } else {
+        // Go down the right subtree
+        return searchHelper(node->right, key);
+    }
+}
+
 // Purpose: Find the data in the tree given a key
 bool AVLTree::search(int key) {
-
+    return searchHelper(this->root, key);
 }
 
 void AVLTree::rebalance(AVLNode* &node) {

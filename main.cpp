@@ -9,7 +9,7 @@
 using namespace std;
 
 int main() {
-    bool standardDebug = false;
+    bool standardDebug = true;
     AVLTree* avl = new AVLTree();
     if(standardDebug) {
         // LR rot test [Start]
@@ -41,6 +41,9 @@ int main() {
         avl->show();
         // LL rot test [End]
         cout << "Height of tree: " << avl->height();
+
+        cout << "Does 6 exist? " << avl->search(6) << endl;
+        cout << "Does 22 exist? " << avl->search(22) << endl;
         
     } else {
          // Random test
