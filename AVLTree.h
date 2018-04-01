@@ -43,6 +43,7 @@ private:
     void removeNode(AVLNode* &node);
     bool removeHelper(AVLNode* &node, int key);
     void calculateBalanceFactors(AVLNode* &node);
+    int sizeHelper(AVLNode* node, int &size);
 
 public:
     AVLTree();

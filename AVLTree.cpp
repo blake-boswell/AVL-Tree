@@ -396,9 +396,20 @@ int AVLTree::height() {
     return calculateHeight(this->root);
 }
 
+int AVLTree::sizeHelper(AVLNode* node, int &size) {
+    if(node == NULL) {
+        return size;
+    }
+    size++;
+    sizeHelper(node->left, size);
+    sizeHelper(node->right, size);
+    return size;
+}
+
 // Purpose: Retrieve the number of nodes in the tree
 int AVLTree::size() {
-
+    int size = 0;
+    return sizeHelper(this->root, size);
 }
 
 // Purpose: Check to see if this tree is an AVL tree
