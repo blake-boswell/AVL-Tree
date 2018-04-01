@@ -39,6 +39,10 @@ private:
     void lrRotation(AVLNode* &node);
     void rotate(AVLNode* &node);
     bool searchHelper(AVLNode* node, int key);
+    void removeBoth(AVLNode* &node);
+    void removeNode(AVLNode* &node);
+    bool removeHelper(AVLNode* &node, int key);
+    void calculateBalanceFactors(AVLNode* &node);
 
 public:
     AVLTree();

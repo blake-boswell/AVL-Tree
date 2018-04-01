@@ -44,6 +44,55 @@ int main() {
 
         cout << "Does 6 exist? " << avl->search(6) << endl;
         cout << "Does 22 exist? " << avl->search(22) << endl;
+        cout << "Removing 6" << endl;
+        if(avl->remove(6)) {
+            cout << "Success!" << endl;
+        }
+        cout << "Does 6 exist? " << avl->search(6) << endl;
+        avl->show();
+        cout << "Removing 3" << endl;
+        if(avl->remove(3)) {
+            cout << "Success!" << endl;
+        }
+        avl->show();
+        cout << "Removing 2" << endl;
+        if(avl->remove(2)) {
+            cout << "Success!" << endl;
+        }
+        avl->show();
+        cout << "Removing 1" << endl;
+        if(avl->remove(1)) {
+            cout << "Success!" << endl;
+        }
+        avl->show();
+        cout << "Removing 8" << endl;
+        if(avl->remove(8)) {
+            cout << "Success!" << endl;
+        }
+        avl->show();
+        cout << "Removing 5" << endl;
+        if(avl->remove(5)) {
+            cout << "Success!" << endl;
+        }
+        avl->show();
+        cout << "Removing 4" << endl;
+        if(avl->remove(4)) {
+            cout << "Success!" << endl;
+        }
+        avl->show();
+        cout << "Removing 9" << endl;
+        if(avl->remove(9)) {
+            cout << "Success!" << endl;
+        }
+        avl->show();
+        cout << "Removing 10" << endl;
+        if(avl->remove(8)) {
+            cout << "Success!" << endl;
+        } else {
+            cout << "Failure!" << endl;
+        }
+        avl->show();
+        cout << "Does 2 exist? " << avl->search(2) << endl;
         
     } else {
          // Random test

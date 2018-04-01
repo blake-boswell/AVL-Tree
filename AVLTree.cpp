@@ -122,15 +122,42 @@ bool AVLTree::search(int key) {
 }
 
 void AVLTree::rebalance(AVLNode* &node) {
+    cout << "Rebalancing" << endl;
     if(node == NULL) {
         return;
     }
-    int leftHeight = calculateHeight(node->left);
-    int rightHeight = calculateHeight(node->right);
-    node->balanceFactor = leftHeight - rightHeight;
-    cout << "[" << node->data << "]\tLeft: " << leftHeight << "\tRight: " << rightHeight << endl;
+    calculateBalanceFactors(node);
     rebalance(node->left);
     rebalance(node->right);
+
+    // if(node->balanceFactor >= 2) {
+    //     // left heavy
+    //     cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
+    //     if(node->left->balanceFactor < 0) {
+    //         // Rotate LR
+    //         cout << "Rotating [" << node->data << "] LR" << endl;
+    //         lrRotation(node);
+    //         // Still need to add 1 to the parent BF if this is the right
+    //     } else if(node->left->balanceFactor > 0) {
+    //         // Rotate LL
+    //         cout << "Rotating [" << node->data << "] LL" << endl; 
+    //         llRotation(node);
+    //     }
+
+    // } else if(node->balanceFactor <= 2) {
+    //     // right heavy
+    //      cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
+    //     if(node->right->balanceFactor < 0) {
+    //         // Rotate RR
+    //         cout << "Rotating [" << node->data << "] RR" << endl;
+    //         rrRotation(node);
+    //         // Still need to add 1 to parent BF if this is the right
+    //     } else if(node->right->balanceFactor > 0) {
+    //         // Rotate RL
+    //         cout << "Rotating [" << node->data << "] RL" << endl;
+    //         rlRotation(node);
+    //     }
+    // }
 }
 
 /**
@@ -156,9 +183,7 @@ bool AVLTree::insertHelper(AVLNode* &node, int key) {
         // Go down the left subtree
         if(insertHelper(node->left, key)) {
             cout << "[L] " << node->data << endl;
-            int leftHeight = calculateHeight(node->left);
-            int rightHeight = calculateHeight(node->right);
-            node->balanceFactor = leftHeight - rightHeight;
+            calculateBalanceFactors(node);
             
             
 
@@ -182,9 +207,7 @@ bool AVLTree::insertHelper(AVLNode* &node, int key) {
         // Go down the right subtree
         if(insertHelper(node->right, key)) {
             cout << "[R] " << node->data << endl;
-            int leftHeight = calculateHeight(node->left);
-            int rightHeight = calculateHeight(node->right);
-            node->balanceFactor = leftHeight - rightHeight;
+            calculateBalanceFactors(node);
             
             
             
@@ -213,9 +236,118 @@ bool AVLTree::insert(int key) {
 
 }
 
+AVLNode* getLargest(AVLNode* node) {
+    if(node == NULL) {
+        return NULL;
+    }
+    if(node->right != NULL) {
+        return getLargest(node->right);
+    } else {
+        return node;
+    }
+}
+
+/**
+ * Remove a node that has 2 children
+ * @param root
+ */
+void AVLTree::removeBoth(AVLNode* &node) {
+    // AVLNode* temp = node;
+    // node = node->right;
+    // node->left = temp->left;
+    // node->balanceFactor = temp->balanceFactor;
+    // delete temp;
+    int newNodeValue = getLargest(node->left)->data;
+    remove(newNodeValue);
+    node->data = newNodeValue;
+}
+
+/**
+ * Remove a node that has only 1 child
+ * @param root
+ */
+void AVLTree::removeNode(AVLNode* & node) {
+    if(node->left == NULL && node->right == NULL) {
+        // Leaf node
+        delete node;
+        node = NULL;
+    } else if(node->left == NULL) {
+        // Single child on the right
+        AVLNode* temp = node;
+        node = node->right;
+        delete temp;
+    } else if(node->right == NULL) {
+        // Single child on the left
+        AVLNode* temp = node;
+        node = node->left;
+        delete temp;
+    } else {
+        removeBoth(node);
+    }
+}
+
+bool AVLTree::removeHelper(AVLNode* &node, int key) {
+    if(node == NULL) {
+        return false;
+    }
+    if(node->data == key) {
+        removeNode(node);
+        // rebalance(node);
+    } else if(node->data > key) {
+        if(removeHelper(node->left, key)) {
+            calculateBalanceFactors(node);
+
+            if(node->balanceFactor <= -2) {
+                // Rotate R*
+                cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
+                if(node->right->balanceFactor <= 0) {
+                    // Rotate RR
+                    cout << "Rotating [" << node->data << "] RR" << endl;
+                    rrRotation(node);
+                    // Still need to add 1 to parent BF if this is the right
+                } else if(node->right->balanceFactor > 0) {
+                    // Rotate RL
+                    cout << "Rotating [" << node->data << "] RL" << endl;
+                    rlRotation(node);
+                }
+            }
+            return true;
+        }
+    } else if(node->data < key) {
+        if(removeHelper(node->right, key)) {
+
+            // calculateBalanceFactor
+            calculateBalanceFactors(node);
+
+            // check rotation left
+            if(node->balanceFactor >= 2) {
+                // Rotate L*
+                cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
+                if(node->left->balanceFactor < 0) {
+                    // Rotate LR
+                    cout << "Rotating [" << node->data << "] LR" << endl;
+                    lrRotation(node);
+                    // Still need to add 1 to the parent BF if this is the right
+                } else if(node->left->balanceFactor >= 0) {
+                    // Rotate LL
+                    cout << "Rotating [" << node->data << "] LL" << endl; 
+                    llRotation(node);
+                }
+            }
+            return true;
+        }
+    }
+}
+
 // Purpose: Remove from the tree and balance it
 bool AVLTree::remove(int key) {
+    return removeHelper(this->root, key);
+}
 
+void AVLTree::calculateBalanceFactors(AVLNode* &node) {
+    int leftHeight = calculateHeight(node->left);
+    int rightHeight = calculateHeight(node->right);
+    node->balanceFactor = leftHeight - rightHeight;
 }
 
 /**
