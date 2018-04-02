@@ -7,10 +7,6 @@ struct AVLNode: Node {
     AVLNode* left;
     AVLNode* right;
 
-    // AVLNode::AVLNode(AVLNode* node) {
-    //     this->balanceVector = node->balanceVector;
-    //     copyNode(this, node);
-    // }
     static void copyNode(AVLNode* &thisNode, AVLNode* &sourceNode) {
         if(sourceNode == NULL) {
             thisNode = NULL;
@@ -44,10 +40,12 @@ private:
     bool removeHelper(AVLNode* &node, int key);
     void calculateBalanceFactors(AVLNode* &node);
     int sizeHelper(AVLNode* node, int &size);
+    bool checkHelper(AVLNode* node);
 
 public:
     AVLTree();
     AVLTree(AVLTree* tree);
+    ~AVLTree();
     bool search(int key);
     bool insert(int key);
     bool remove(int key);

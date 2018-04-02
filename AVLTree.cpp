@@ -22,9 +22,14 @@ void AVLTree::copyTree(AVLNode* &thisRoot, AVLNode* &sourceRoot) {
     } else {
         thisRoot = new AVLNode;
         thisRoot->data = sourceRoot->data;
+        thisRoot->balanceFactor = sourceRoot->balanceFactor;
         copyTree(thisRoot->left, sourceRoot->left);
         copyTree(thisRoot->right, sourceRoot->right);
     }
+}
+
+AVLTree::~AVLTree() {
+    delete root;
 }
 
 void AVLTree::rrRotation(AVLNode* &node) {
@@ -129,42 +134,10 @@ void AVLTree::rebalance(AVLNode* &node) {
     calculateBalanceFactors(node);
     rebalance(node->left);
     rebalance(node->right);
-
-    // if(node->balanceFactor >= 2) {
-    //     // left heavy
-    //     cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
-    //     if(node->left->balanceFactor < 0) {
-    //         // Rotate LR
-    //         cout << "Rotating [" << node->data << "] LR" << endl;
-    //         lrRotation(node);
-    //         // Still need to add 1 to the parent BF if this is the right
-    //     } else if(node->left->balanceFactor > 0) {
-    //         // Rotate LL
-    //         cout << "Rotating [" << node->data << "] LL" << endl; 
-    //         llRotation(node);
-    //     }
-
-    // } else if(node->balanceFactor <= 2) {
-    //     // right heavy
-    //      cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
-    //     if(node->right->balanceFactor < 0) {
-    //         // Rotate RR
-    //         cout << "Rotating [" << node->data << "] RR" << endl;
-    //         rrRotation(node);
-    //         // Still need to add 1 to parent BF if this is the right
-    //     } else if(node->right->balanceFactor > 0) {
-    //         // Rotate RL
-    //         cout << "Rotating [" << node->data << "] RL" << endl;
-    //         rlRotation(node);
-    //     }
-    // }
 }
 
 /**
- * Return values:
- * 0: value already exists
- * 1: insert success
- * 2: insert and rotation
+ * Helper method for a recursive insert into the tree
 */
 bool AVLTree::insertHelper(AVLNode* &node, int key) {
     if(node == NULL) {
@@ -252,11 +225,6 @@ AVLNode* getLargest(AVLNode* node) {
  * @param root
  */
 void AVLTree::removeBoth(AVLNode* &node) {
-    // AVLNode* temp = node;
-    // node = node->right;
-    // node->left = temp->left;
-    // node->balanceFactor = temp->balanceFactor;
-    // delete temp;
     int newNodeValue = getLargest(node->left)->data;
     remove(newNodeValue);
     node->data = newNodeValue;
@@ -412,7 +380,29 @@ int AVLTree::size() {
     return sizeHelper(this->root, size);
 }
 
+bool AVLTree::checkHelper(AVLNode* node) {
+    if(node == NULL) {
+        return true;
+    }
+    if(node->left == NULL && node->right != NULL) {
+        bool isBST = (node->data < node->right->data);
+        bool isAVL = (abs(calculateHeight(node->left) - calculateHeight(node->right)) <= 1);
+        return (isBST && isAVL);
+
+    }
+    if(node->left != NULL && node->right == NULL) {
+        bool isBST = (node->data > node->left->data);
+        bool isAVL = (abs(calculateHeight(node->left) - calculateHeight(node->right)) <= 1);
+        return (isBST && isAVL);
+    }
+    if(checkHelper(node->left) == false || checkHelper(node->right) == false) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 // Purpose: Check to see if this tree is an AVL tree
 bool AVLTree::check() {
-
+    return checkHelper(this->root);
 }
