@@ -1,6 +1,7 @@
 // Author: Blake Boswell
 #include "AVLTree.h"
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -127,7 +128,6 @@ bool AVLTree::search(int key) {
 }
 
 void AVLTree::rebalance(AVLNode* &node) {
-    cout << "Rebalancing" << endl;
     if(node == NULL) {
         return;
     }
@@ -155,22 +155,12 @@ bool AVLTree::insertHelper(AVLNode* &node, int key) {
     if(node->data > key) {
         // Go down the left subtree
         if(insertHelper(node->left, key)) {
-            cout << "[L] " << node->data << endl;
             calculateBalanceFactors(node);
-            
-            
-
             if(node->balanceFactor >= 2) {
                 // Rotate L*
-                cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
                 if(node->left->balanceFactor < 0) {
-                    // Rotate LR
-                    cout << "Rotating [" << node->data << "] LR" << endl;
                     lrRotation(node);
-                    // Still need to add 1 to the parent BF if this is the right
                 } else if(node->left->balanceFactor > 0) {
-                    // Rotate LL
-                    cout << "Rotating [" << node->data << "] LL" << endl; 
                     llRotation(node);
                 }
             }
@@ -179,22 +169,11 @@ bool AVLTree::insertHelper(AVLNode* &node, int key) {
     } else {
         // Go down the right subtree
         if(insertHelper(node->right, key)) {
-            cout << "[R] " << node->data << endl;
             calculateBalanceFactors(node);
-            
-            
-            
             if(node->balanceFactor <= -2) {
-                // Rotate R*
-                cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
                 if(node->right->balanceFactor < 0) {
-                    // Rotate RR
-                    cout << "Rotating [" << node->data << "] RR" << endl;
                     rrRotation(node);
-                    // Still need to add 1 to parent BF if this is the right
                 } else if(node->right->balanceFactor > 0) {
-                    // Rotate RL
-                    cout << "Rotating [" << node->data << "] RL" << endl;
                     rlRotation(node);
                 }
             }
@@ -260,22 +239,16 @@ bool AVLTree::removeHelper(AVLNode* &node, int key) {
     }
     if(node->data == key) {
         removeNode(node);
-        // rebalance(node);
+        return true;
     } else if(node->data > key) {
         if(removeHelper(node->left, key)) {
             calculateBalanceFactors(node);
 
             if(node->balanceFactor <= -2) {
-                // Rotate R*
-                cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
+                
                 if(node->right->balanceFactor <= 0) {
-                    // Rotate RR
-                    cout << "Rotating [" << node->data << "] RR" << endl;
                     rrRotation(node);
-                    // Still need to add 1 to parent BF if this is the right
                 } else if(node->right->balanceFactor > 0) {
-                    // Rotate RL
-                    cout << "Rotating [" << node->data << "] RL" << endl;
                     rlRotation(node);
                 }
             }
@@ -283,28 +256,20 @@ bool AVLTree::removeHelper(AVLNode* &node, int key) {
         }
     } else if(node->data < key) {
         if(removeHelper(node->right, key)) {
-
-            // calculateBalanceFactor
             calculateBalanceFactors(node);
-
             // check rotation left
             if(node->balanceFactor >= 2) {
-                // Rotate L*
-                cout << "Need to rotate [" << node->data << "]: BV: " << node->balanceFactor << endl;
+               
                 if(node->left->balanceFactor < 0) {
-                    // Rotate LR
-                    cout << "Rotating [" << node->data << "] LR" << endl;
                     lrRotation(node);
-                    // Still need to add 1 to the parent BF if this is the right
                 } else if(node->left->balanceFactor >= 0) {
-                    // Rotate LL
-                    cout << "Rotating [" << node->data << "] LL" << endl; 
                     llRotation(node);
                 }
             }
             return true;
         }
     }
+    return false;
 }
 
 // Purpose: Remove from the tree and balance it
