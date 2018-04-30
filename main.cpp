@@ -10,7 +10,7 @@
 using namespace std;
 
 int main() {
-    bool standardDebug = true;
+    bool standardDebug = false;
     AVLTree* avl = new AVLTree();
     BinarySearchTree* tree = new BinarySearchTree();
     if(standardDebug) {
@@ -140,104 +140,95 @@ int main() {
         cout << "Does 2 exist? " << avl->search(2) << endl;
         
     } else {
-        cout << "Size: " << avl->size() << endl; 
+        // Random test
+        const int numInserts = 20000;
+        int count = 0;
+        int input;
+        srand(time(NULL));
+
+        // Generate an array of numInserts unique numbers
+        int* deletions = new int[numInserts];
+        int* inputs = new int[numInserts];
+        for(int i = 0; i < numInserts; i++) {
+            inputs[i] = i;
+        }
+
+        // Shuffle the arrays
+        random_shuffle(&inputs[0], &inputs[numInserts]);
+
+
+        cout << "Beginning insertion test for " << numInserts << " random insertions..." << endl;
+
+        clock_t start;
+        double duration;
+        start = clock();
+
+        while(count < numInserts) {
+            if(numInserts <= 20) 
+                cout << "Inserting " << inputs[count] << endl;
+            if(avl->insert(inputs[count])) {
+                count++;
+                // avl->show();
+                // cout << "Is AVL: " << avl->check() << endl;
+            } else {
+                cout << "FAILED inserting " << inputs[count] << endl;
+                return 0;
+            }
+        }
+
+        duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+        cout << "Size: " << avl->size() << endl;
+        cout << duration << " seconds to insert " << count << " nodes!" << endl;
+
         cout << "Is AVL: " << avl->check() << endl;
-        cout << "inserting 6" << endl;
-        avl->insert(6);
-        cout << "Size: " << avl->size() << endl; 
-        cout << "Is AVL: " << avl->check() << endl;
-        cout << "inserting 3" << endl;
-        avl->insert(3);
-        cout << "Size: " << avl->size() << endl; 
-        cout << "Is AVL: " << avl->check() << endl;
-         cout << "inserting 8" << endl;
-        avl->insert(8);
-        cout << "Size: " << avl->size() << endl; 
-        cout << "Is AVL: " << avl->check() << endl;
 
+        // BST insertion comparison
 
-    //     // Random test
-    //    const int numInserts = 25000;
-    //    int count = 0;
-    //    int input;
-    //    srand(time(NULL));
+            start = clock();
 
-    //    // Generate an array of numInserts unique numbers
-    //    int* deletions = new int[numInserts];
-    //    int* inputs = new int[numInserts];
-    //    for(int i = 0; i < numInserts; i++) {
-    //        inputs[i] = i;
-    //    }
+        while(count < numInserts) {
+            if(tree->insert(inputs[count])) {
+                count++;
+            }
+        }
 
-    //    // Shuffle the arrays
-    //    random_shuffle(&inputs[0], &inputs[numInserts]);
+        duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+        cout << "Size: " << tree->size() << endl;
+        cout << duration << " seconds to insert " << count << " nodes!" << endl;
 
-
-    //    cout << "Beginning insertion test for " << numInserts << " random insertions..." << endl;
-
-    //    clock_t start;
-    //    double duration;
-    //    start = clock();
-
-    //    while(count < numInserts) {
-    //        if(avl->insert(inputs[count])) {
-    //            count++;
-    //        }
-    //    }
-
-    //    duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-    //    cout << "Size: " << avl->size() << endl;
-    //    cout << duration << " seconds to insert " << count << " nodes!" << endl;
-
-    //    cout << "Is AVL: " << avl->check() << endl;
-
-    //    // BST insertion comparison
-
-    //     start = clock();
-
-    //    while(count < numInserts) {
-    //        if(tree->insert(inputs[count])) {
-    //            count++;
-    //        }
-    //    }
-
-    //    duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-    //    cout << "Size: " << tree->size() << endl;
-    //    cout << duration << " seconds to insert " << count << " nodes!" << endl;
-
-    //    cout << "Is BST: " << tree->check() << endl;
+        cout << "Is BST: " << tree->check() << endl;
 
 
        
 
-    // //    cout << "Beginning deletion test for " << numInserts << " random deletions..." << endl;
-    // //    count = 0;
-    // //    // random_shuffle(&inputs[0], &inputs[numInserts]);
-    // //    for(int i = 0; i < numInserts; i++) {
-    // //        if(!avl->search(inputs[i])) {
-    // //            cout << inputs[i] << " does not exist in the array..." << endl;
-    // //        }
-    // //    }
-    // //    start = clock();
-    // //    while(count < numInserts) {
-    // //         cout << count << endl;
-    // //        // input = (count * rand()) % (numInserts * 10);
-    // //        cout << "removing " << inputs[count] << endl;
-    // //        avl->show();
-    // //        if(avl->remove(inputs[count])) {
-    // //            count++;
-    // //            if(avl->size() % (numInserts/1000) == 0)
-    // //                cout << "Tree now contains " << avl->size() << " nodes." << endl;
-    // //        } else {
-    // //            cout << "Value " << inputs[count] << " not found in tree." << endl;
-    // //            cout << "Does " << inputs[count] << " (Value at index " << count << " exist? " << avl->search(inputs[count]) << endl;
-    // //            //return 0;
-    // //        }
-    // //        count++;
-    // //    }
-    // //    duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-    // //    cout << "Size: " << avl->size() << endl;
-    // //    cout << duration << " seconds to delete " << count << " nodes!" << endl;
+    //    cout << "Beginning deletion test for " << numInserts << " random deletions..." << endl;
+    //    count = 0;
+    //    // random_shuffle(&inputs[0], &inputs[numInserts]);
+    //    for(int i = 0; i < numInserts; i++) {
+    //        if(!avl->search(inputs[i])) {
+    //            cout << inputs[i] << " does not exist in the array..." << endl;
+    //        }
+    //    }
+    //    start = clock();
+    //    while(count < numInserts) {
+    //         cout << count << endl;
+    //        // input = (count * rand()) % (numInserts * 10);
+    //        cout << "removing " << inputs[count] << endl;
+    //        avl->show();
+    //        if(avl->remove(inputs[count])) {
+    //            count++;
+    //            if(avl->size() % (numInserts/1000) == 0)
+    //                cout << "Tree now contains " << avl->size() << " nodes." << endl;
+    //        } else {
+    //            cout << "Value " << inputs[count] << " not found in tree." << endl;
+    //            cout << "Does " << inputs[count] << " (Value at index " << count << " exist? " << avl->search(inputs[count]) << endl;
+    //            //return 0;
+    //        }
+    //        count++;
+    //    }
+    //    duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+    //    cout << "Size: " << avl->size() << endl;
+    //    cout << duration << " seconds to delete " << count << " nodes!" << endl;
     }    
 
     // Empirical study

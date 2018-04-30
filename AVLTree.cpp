@@ -34,6 +34,7 @@ AVLTree::~AVLTree() {
 }
 
 void AVLTree::rrRotation(AVLNode* &node) {
+    cout << "RR ROT on " << node->data << endl;
     AVLNode* temp = node;
     node = temp->right;
     AVLNode* tempLeft = node->left;
@@ -41,13 +42,15 @@ void AVLTree::rrRotation(AVLNode* &node) {
     node->left->right = tempLeft;
 
     // Fix balance factors
-    // node->balanceFactor += 1;
-    // node->left->balanceFactor += 2;
-    rebalance(node);
+    node->balanceFactor = 0;
+    node->left->balanceFactor = 0;
+    // rebalance(node);
     // +1 to parent
 }
 
 void AVLTree::rlRotation(AVLNode* &node) {
+    cout << "RL ROT on " << node->data << endl;
+    int oldRLBalanceFactor = node->right->left->balanceFactor;
     AVLNode* temp = node;
     node = node->right->left;
     AVLNode* tempLeft = node->left;
@@ -58,14 +61,25 @@ void AVLTree::rlRotation(AVLNode* &node) {
     node->right->left = tempRight;
 
     // Fix balance factors
-    // node->balanceFactor -= 1;
-    // node->right->balanceFactor -= 2;
-    // node->left->balanceFactor += 2;
-    rebalance(node);
+    node->balanceFactor = 0;
+    if(oldRLBalanceFactor == -1) {
+        node->left->balanceFactor = 1;
+    } else {
+        node->left->balanceFactor = 0;
+    }
+
+    if(oldRLBalanceFactor == 1) {
+        node->right->balanceFactor = -1;
+    } else {
+        node->right->balanceFactor = 0;
+    }
+    // rebalance(node);
     // +1 to parent
 }
 
 void AVLTree::llRotation(AVLNode* &node) {
+    cout << "LL ROT on " << node->data << endl;
+    int oldLLBalanceFactor = node->left->left->balanceFactor;
     AVLNode* temp = node;
     node = node->left;
     AVLNode* tempRight = node->right;
@@ -73,13 +87,16 @@ void AVLTree::llRotation(AVLNode* &node) {
     node->right->left = tempRight;
 
     // Fix balance factors
-    // node->balanceFactor -= 1;
-    // node->right->balanceFactor -= 2;
-    rebalance(node);
+    node->balanceFactor = 0;
+    node->right->balanceFactor = 0;
+    // rebalance(node);
+    // -1 to parent
 }
 
 void AVLTree::lrRotation(AVLNode* &node) {
     // Pull up new root to this subtree
+    cout << "LR ROT on " << node->data << endl;
+    int oldLRBalanceFactor = node->left->right->balanceFactor;
     AVLNode* temp;
     temp = node;
     node = temp->left->right;
@@ -91,9 +108,20 @@ void AVLTree::lrRotation(AVLNode* &node) {
     node->left = temp;
 
     // Fix balance factors
-    // node->right->balanceFactor -= 2;
-    // node->left->balanceFactor += 1;
-    rebalance(node);
+    node->balanceFactor = 0;
+    if(oldLRBalanceFactor == 1) {
+        node->left->balanceFactor = 0;
+        node->right->balanceFactor = -1;
+    } else if(oldLRBalanceFactor == -1) {
+        node->left->balanceFactor = 1;
+        node->right->balanceFactor = 0;
+    } else {
+        node->balanceFactor = 0;
+        node->left->balanceFactor = 0;
+        node->right->balanceFactor = 0;
+    }
+    // rebalance(node);
+    // -1 to parent
     
     
     
@@ -165,15 +193,16 @@ bool AVLTree::insertHelper(AVLNode* &node, int key, bool& flag) {
                 // Rotate L*
                 if(node->left->balanceFactor < 0) {
                     lrRotation(node);
+                    flag = false;
                 } else if(node->left->balanceFactor > 0) {
                     llRotation(node);
+                    flag = false;
                 }
             }
             if(node->balanceFactor == 0) {
                 flag = false;
             }
         }
-        cout << node->data << " BF: " << node->balanceFactor << endl;
         return didInsert;
     } else {
         // Go down the right subtree
@@ -183,15 +212,16 @@ bool AVLTree::insertHelper(AVLNode* &node, int key, bool& flag) {
             if(node->balanceFactor <= -2) {
                 if(node->right->balanceFactor < 0) {
                     rrRotation(node);
+                    flag = true;
                 } else if(node->right->balanceFactor > 0) {
                     rlRotation(node);
+                    flag = true;
                 }
             }
             if(node->balanceFactor == 0) {
                 flag = false;
             }
         }
-        cout << node->data << " BF: " << node->balanceFactor << endl;
         return didInsert;
     }
 }
