@@ -11,6 +11,10 @@ BinarySearchTree::BinarySearchTree() {
     this->node = NULL;
 }
 
+BinarySearchTree::~BinarySearchTree() {
+    delete node;
+}
+
 Node* BinarySearchTree::searchHelper(Node* node, int key) {
     if(node == NULL) {
         // Tree is empty

@@ -25,7 +25,7 @@ private:
     AVLNode* root;
     void copyTree(AVLNode* &thisRoot, AVLNode* &sourceRoot);
     void rebalance(AVLNode* &node);
-    bool insertHelper(AVLNode* &node, int key);
+    bool insertHelper(AVLNode* &node, int key, bool& flag);
     int calculateHeight(AVLNode* node);
     void showInorder(AVLNode* node);
     void showPostorder(AVLNode* node);

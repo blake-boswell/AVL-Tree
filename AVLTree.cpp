@@ -138,24 +138,29 @@ void AVLTree::rebalance(AVLNode* &node) {
 
 /**
  * Helper method for a recursive insert into the tree
+ * flag: the height of the subtree inserted into has increased by one
 */
-bool AVLTree::insertHelper(AVLNode* &node, int key) {
+bool AVLTree::insertHelper(AVLNode* &node, int key, bool& flag) {
     if(node == NULL) {
         node = new AVLNode;
         node->data = key;
         node->left = NULL;
         node->right = NULL;
         node->balanceFactor = 0;
+        flag = true;
         return true;
     }
     if(node->data == key) {
         // Data already exists
+        flag = false;
         return false;
     }
     if(node->data > key) {
         // Go down the left subtree
-        if(insertHelper(node->left, key)) {
-            calculateBalanceFactors(node);
+        bool didInsert = insertHelper(node->left, key, flag);
+        if(didInsert && flag) {
+            // height has increased by one from this insertion on left subtree
+            node->balanceFactor += 1;
             if(node->balanceFactor >= 2) {
                 // Rotate L*
                 if(node->left->balanceFactor < 0) {
@@ -164,12 +169,17 @@ bool AVLTree::insertHelper(AVLNode* &node, int key) {
                     llRotation(node);
                 }
             }
-            return true;
+            if(node->balanceFactor == 0) {
+                flag = false;
+            }
         }
+        cout << node->data << " BF: " << node->balanceFactor << endl;
+        return didInsert;
     } else {
         // Go down the right subtree
-        if(insertHelper(node->right, key)) {
-            calculateBalanceFactors(node);
+        bool didInsert = insertHelper(node->right, key, flag);
+        if(didInsert && flag) {
+            node->balanceFactor -= 1;
             if(node->balanceFactor <= -2) {
                 if(node->right->balanceFactor < 0) {
                     rrRotation(node);
@@ -177,14 +187,19 @@ bool AVLTree::insertHelper(AVLNode* &node, int key) {
                     rlRotation(node);
                 }
             }
-            return true;
+            if(node->balanceFactor == 0) {
+                flag = false;
+            }
         }
+        cout << node->data << " BF: " << node->balanceFactor << endl;
+        return didInsert;
     }
 }
 
 // Purpose: Insert into the tree and balance it
 bool AVLTree::insert(int key) {
-    return insertHelper(this->root, key);
+    bool flag = true;
+    return insertHelper(this->root, key, flag);
 
 }
 

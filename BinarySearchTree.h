@@ -26,6 +26,7 @@ private:
 
 public:
     explicit BinarySearchTree();
+    ~BinarySearchTree();
     Node* search(int key);
     bool insert(int key);
     bool remove(int key);
