@@ -33,23 +33,34 @@ AVLTree::~AVLTree() {
     delete root;
 }
 
-void AVLTree::rrRotation(AVLNode* &node) {
-    cout << "RR ROT on " << node->data << endl;
-    AVLNode* temp = node;
-    node = temp->right;
+void AVLTree::rrRotation(AVLNode* &node, bool isInsert) {
+   // cout << "RR ROT on " << node->data << endl;
+    AVLNode* oldRoot = node;
+    node = oldRoot->right;
     AVLNode* tempLeft = node->left;
-    node->left = temp;
+    node->left = oldRoot;
     node->left->right = tempLeft;
 
     // Fix balance factors
-    node->balanceFactor = 0;
-    node->left->balanceFactor = 0;
-    // rebalance(node);
-    // +1 to parent
+    if(isInsert) {
+        node->balanceFactor = 0;
+        node->left->balanceFactor = 0;
+        // +1 to parent
+        // Below for deletion
+    } else if(node->balanceFactor == -1) {
+        node->balanceFactor = 0;
+        oldRoot->balanceFactor = 0;
+        // -1 up
+    } else if(node->balanceFactor == 0) {
+        node->balanceFactor = 1;
+        oldRoot->balanceFactor = -1;
+        // Nothing up
+    }
+    
 }
 
-void AVLTree::rlRotation(AVLNode* &node) {
-    cout << "RL ROT on " << node->data << endl;
+void AVLTree::rlRotation(AVLNode* &node, bool isInsert) {
+    // cout << "RL ROT on " << node->data << endl;
     int oldRLBalanceFactor = node->right->left->balanceFactor;
     AVLNode* temp = node;
     node = node->right->left;
@@ -61,41 +72,73 @@ void AVLTree::rlRotation(AVLNode* &node) {
     node->right->left = tempRight;
 
     // Fix balance factors
-    node->balanceFactor = 0;
-    if(oldRLBalanceFactor == -1) {
-        node->left->balanceFactor = 1;
-    } else {
+    if(isInsert) {
+        node->balanceFactor = 0;
+        if(oldRLBalanceFactor == -1) {
+            node->left->balanceFactor = 1;
+        } else {
+            node->left->balanceFactor = 0;
+        }
+
+        if(oldRLBalanceFactor == 1) {
+            node->right->balanceFactor = -1;
+        } else {
+            node->right->balanceFactor = 0;
+        }
+        // +1 to parent
+        // Below for deletion
+    } else if(node->right->balanceFactor == 1 && oldRLBalanceFactor == 1) {
+        node->balanceFactor = 0;
+        node->right->balanceFactor = -1;
         node->left->balanceFactor = 0;
+        // -1 up
+    } else if(node->right->balanceFactor == 1 && oldRLBalanceFactor == 0) {
+        node->balanceFactor = 0;
+        node->right->balanceFactor = 0;
+        node->left->balanceFactor = 0;
+    } else if(node->right->balanceFactor == 1 && oldRLBalanceFactor == -1) {
+        node->balanceFactor = 0;
+        node->right->balanceFactor = 0;
+        node->left->balanceFactor = 1;
     }
 
-    if(oldRLBalanceFactor == 1) {
-        node->right->balanceFactor = -1;
-    } else {
-        node->right->balanceFactor = 0;
-    }
-    // rebalance(node);
-    // +1 to parent
 }
 
-void AVLTree::llRotation(AVLNode* &node) {
-    cout << "LL ROT on " << node->data << endl;
+void AVLTree::llRotation(AVLNode* &node, bool isInsert) {
+    // cout << "LL ROT on " << node->data << endl;
     int oldLLBalanceFactor = node->left->left->balanceFactor;
-    AVLNode* temp = node;
+    AVLNode* oldRoot = node;
     node = node->left;
     AVLNode* tempRight = node->right;
-    node->right = temp;
+    node->right = oldRoot;
     node->right->left = tempRight;
 
     // Fix balance factors
-    node->balanceFactor = 0;
-    node->right->balanceFactor = 0;
-    // rebalance(node);
-    // -1 to parent
+    if(isInsert) {
+        node->balanceFactor = 0;
+        node->right->balanceFactor = 0;
+        // -1 to parent
+        // Below for deletion
+    } else if(node->balanceFactor == -1) {
+        cout << "This should never happen!" << endl;
+            // node->balanceFactor = 0;
+            // node->right->balanceFactor = 0;
+            // Continue up
+        
+    } else if(node->balanceFactor == 0) {
+            node->balanceFactor = -1;
+            node->right->balanceFactor = 1;
+            // Nothing up
+    } else if(node->balanceFactor == 1) {
+        node->balanceFactor = 0;
+        node->right->balanceFactor = 0;
+    }
+    
 }
 
-void AVLTree::lrRotation(AVLNode* &node) {
+void AVLTree::lrRotation(AVLNode* &node, bool isInsert) {
     // Pull up new root to this subtree
-    cout << "LR ROT on " << node->data << endl;
+    // cout << "LR ROT on " << node->data << endl;
     int oldLRBalanceFactor = node->left->right->balanceFactor;
     AVLNode* temp;
     temp = node;
@@ -108,20 +151,36 @@ void AVLTree::lrRotation(AVLNode* &node) {
     node->left = temp;
 
     // Fix balance factors
-    node->balanceFactor = 0;
-    if(oldLRBalanceFactor == 1) {
-        node->left->balanceFactor = 0;
-        node->right->balanceFactor = -1;
-    } else if(oldLRBalanceFactor == -1) {
-        node->left->balanceFactor = 1;
-        node->right->balanceFactor = 0;
-    } else {
+    if(isInsert) {
         node->balanceFactor = 0;
-        node->left->balanceFactor = 0;
-        node->right->balanceFactor = 0;
+        if(oldLRBalanceFactor == 1) {
+            node->left->balanceFactor = 0;
+            node->right->balanceFactor = -1;
+        } else if(oldLRBalanceFactor == -1) {
+            node->left->balanceFactor = 1;
+            node->right->balanceFactor = 0;
+        } else {
+            node->balanceFactor = 0;
+            node->left->balanceFactor = 0;
+            node->right->balanceFactor = 0;
+        }
+        // -1 to parent
+        // Below for deletion
+    } else if(node->left->balanceFactor == -1) {
+        if(node->balanceFactor == -1) {
+            node->balanceFactor = 0;
+            node->left->balanceFactor = 1;
+            node->right->balanceFactor = 0;
+        } else if(node->balanceFactor == 0) {
+            node->left->balanceFactor = 0;
+            node->right->balanceFactor = 0;
+        } else if(node->balanceFactor == 1) {
+            node->balanceFactor = 0;
+            node->left->balanceFactor = 0;
+            node->right->balanceFactor = -1;
+        }
     }
-    // rebalance(node);
-    // -1 to parent
+    
     
     
     
@@ -155,13 +214,13 @@ bool AVLTree::search(int key) {
     return searchHelper(this->root, key);
 }
 
-void AVLTree::rebalance(AVLNode* &node) {
+void AVLTree::insertionRebalance(AVLNode* &node) {
     if(node == NULL) {
         return;
     }
     calculateBalanceFactors(node);
-    rebalance(node->left);
-    rebalance(node->right);
+    insertionRebalance(node->left);
+    insertionRebalance(node->right);
 }
 
 /**
@@ -192,10 +251,10 @@ bool AVLTree::insertHelper(AVLNode* &node, int key, bool& flag) {
             if(node->balanceFactor >= 2) {
                 // Rotate L*
                 if(node->left->balanceFactor < 0) {
-                    lrRotation(node);
+                    lrRotation(node, true);
                     flag = false;
                 } else if(node->left->balanceFactor > 0) {
-                    llRotation(node);
+                    llRotation(node, true);
                     flag = false;
                 }
             }
@@ -211,10 +270,10 @@ bool AVLTree::insertHelper(AVLNode* &node, int key, bool& flag) {
             node->balanceFactor -= 1;
             if(node->balanceFactor <= -2) {
                 if(node->right->balanceFactor < 0) {
-                    rrRotation(node);
+                    rrRotation(node, true);
                     flag = true;
                 } else if(node->right->balanceFactor > 0) {
-                    rlRotation(node);
+                    rlRotation(node, true);
                     flag = true;
                 }
             }
@@ -244,82 +303,124 @@ AVLNode* getLargest(AVLNode* node) {
     }
 }
 
+int AVLTree::deleteMax(AVLNode* &node) {
+    AVLNode* predecessor = getLargest(node);
+    int data = predecessor->data;
+    bool flag = true;
+    removeHelper(this->root, data, flag);
+    return data;
+}
+
 /**
  * Remove a node that has 2 children
  * @param root
  */
-void AVLTree::removeBoth(AVLNode* &node) {
-    int newNodeValue = getLargest(node->left)->data;
-    remove(newNodeValue);
-    node->data = newNodeValue;
+void AVLTree::removeBoth(AVLNode* node) {
+    // cout << node->balanceFactor << endl;
+    int newValue = deleteMax(node->left);
+    node->data = newValue;
+    // cout << node->balanceFactor << endl;
+    
 }
 
 /**
  * Remove a node that has only 1 child
  * @param root
  */
-void AVLTree::removeNode(AVLNode* & node) {
+void AVLTree::removeNode(AVLNode* & node, bool& flag) {
     if(node->left == NULL && node->right == NULL) {
         // Leaf node
+        // cout << "[Leaf RM] Removing " << node->data << endl;
         delete node;
         node = NULL;
+        
     } else if(node->left == NULL) {
         // Single child on the right
+        // cout << "[Has right] Removing " << node->data << endl;
         AVLNode* temp = node;
         node = node->right;
         delete temp;
     } else if(node->right == NULL) {
         // Single child on the left
+        // cout << "[Has left] Removing " << node->data << endl;
         AVLNode* temp = node;
         node = node->left;
         delete temp;
     } else {
+        // cout << "[Has both] Removing " << node->data << endl;
         removeBoth(node);
+        flag = false;
     }
 }
-
-bool AVLTree::removeHelper(AVLNode* &node, int key) {
+/**
+ * Decide how we are going to remove a node, and deal with the BF changes
+ * flag: the height of the subtree deleted from has decreased by one
+*/
+bool AVLTree::removeHelper(AVLNode* &node, int key, bool& flag) {
     if(node == NULL) {
         return false;
     }
     if(node->data == key) {
-        removeNode(node);
+        flag = true;
+        removeNode(node, flag);
         return true;
     } else if(node->data > key) {
-        if(removeHelper(node->left, key)) {
-            calculateBalanceFactors(node);
-
-            if(node->balanceFactor <= -2) {
+        bool didRemove = removeHelper(node->left, key, flag);
+        if(didRemove && flag) {
+            node->balanceFactor -= 1;
+            if(node->balanceFactor == 0) {
+                // Remove one up the tree
+                flag = true;
+            } else if(node->balanceFactor == -1) {
+                // Don't change up the tree
+                flag = false;
+            } else if(node->balanceFactor <= -2) {
                 
-                if(node->right->balanceFactor <= 0) {
-                    rrRotation(node);
-                } else if(node->right->balanceFactor > 0) {
-                    rlRotation(node);
+                if(node->right->balanceFactor == -1) {
+                    rrRotation(node, false);
+                    flag = true;
+                } else if(node->right->balanceFactor == 0) {
+                    rrRotation(node, false);
+                    flag = false;
+                } else if(node->right->balanceFactor == 1) {
+                    rlRotation(node, false);
+                    flag = true;
                 }
             }
-            return true;
         }
+        
+        return didRemove;
     } else if(node->data < key) {
-        if(removeHelper(node->right, key)) {
-            calculateBalanceFactors(node);
-            // check rotation left
-            if(node->balanceFactor >= 2) {
+        bool didRemove = removeHelper(node->right, key, flag);
+        if(didRemove && flag) {
+            node->balanceFactor += 1;
+            if(node->balanceFactor == 0) {
+                flag = true;
+            } else if(node->balanceFactor == 1) {
+                flag = false;
+            } else if(node->balanceFactor >= 2) {
                
-                if(node->left->balanceFactor < 0) {
-                    lrRotation(node);
-                } else if(node->left->balanceFactor >= 0) {
-                    llRotation(node);
+                if(node->left->balanceFactor == -1) {
+                    lrRotation(node, false);
+                    flag = true;
+                } else if(node->left->balanceFactor == 0) {
+                    llRotation(node, false);
+                    flag = false;
+                }else if(node->left->balanceFactor == 1) {
+                    llRotation(node, false);
+                    flag = true;
                 }
             }
-            return true;
         }
+        return didRemove;
     }
     return false;
 }
 
 // Purpose: Remove from the tree and balance it
 bool AVLTree::remove(int key) {
-    return removeHelper(this->root, key);
+    bool flag = true;
+    return removeHelper(this->root, key, flag);
 }
 
 void AVLTree::calculateBalanceFactors(AVLNode* &node) {
